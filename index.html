@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faira Marketing Dashboard 📊</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo for beautiful Arabic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Segoe UI', 'sans-serif'],
+                    },
+                    colors: {
+                        // Custom green branding palette extracted from logo (3).webp
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#2eb572', // Primary Logo Green (فايرا)
+                            600: '#249e61', 
+                            700: '#1b804d',
+                            800: '#15613b',
+                            900: '#0e4228',
+                        },
+                        darkBg: '#0b0f19',
+                        darkCard: '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+        }
+        /* Custom scrollbar matching brand colors */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2eb572;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #249e61;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <!-- Using logo (3).webp verbatim with fallback icon -->
+                <div class="flex items-center gap-3">
+                    <img src="logo (3).webp" alt="Faiera Logo" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/2eb572/ffffff?text=Faiera';">
+                    <div class="border-r border-slate-200 dark:border-slate-700 pr-3">
+                        <h1 class="text-xl font-extrabold tracking-tight text-brand-600 dark:text-brand-500 leading-tight">فايرا | Faiera</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold">لوحة تحكم الأداء الإعلاني المتقدمة</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-full">
+                    <i class="fa-regular fa-calendar-alt"></i>
+                    التقرير المعتمد: 17 مايو - 2 يونيو 2026
+                </span>
+                
+                <!-- Dark Mode Toggle Button -->
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="تبديل المظهر">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Hero Section with Logo Integration -->
+        <section class="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 text-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-brand-500/30 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="max-w-3xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs bg-white/20 backdrop-blur text-white font-semibold rounded-full mb-4">
+                        <i class="fa-solid fa-file-excel"></i> مصادق عليه من ملف: Faira-report-from-17-5-till-2-6_2.xlsx
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3 leading-tight">التقرير التفاعلي النهائي لمشروع فايرا (Faiera)</h2>
+                    <p class="text-sm sm:text-base text-brand-100 leading-relaxed">
+                        تمت معالجة البيانات الإعلانية الخام وتنسيقها لتحليل تكاليف الرسائل على مستوى كل مادة دراسية ومطابقتها بالتوزيع الديموغرافي التفصيلي للوصول إلى أفضل هيكلة توزيع للميزانية.
+                    </p>
+                </div>
+                <div class="hidden md:block bg-white/10 backdrop-blur p-4 rounded-2xl border border-white/20 shadow-inner">
+                    <img src="logo (3).webp" alt="Faiera Logo Medium" class="h-28 w-auto object-contain filter brightness-100 contrast-100" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </section>
+
+        <!-- Comprehensive Overview Metrics Grid -->
+        <div class="mb-4">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-brand-500"></i> المؤشرات الإجمالية للأداء الإعلاني (General KPIs)
+            </h4>
+        </div>
+        <section id="overview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <!-- Spent -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">إجمالي الميزانية المنفقة</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">12,030.80 <span class="text-xs font-normal text-slate-500">ج.م</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-circle-check"></i> حملات نشطة + موقوفة
+                </div>
+            </div>
+            
+            <!-- Messages -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">الرسائل المحققة</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">697 <span class="text-xs font-normal text-slate-500">محادثة</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-paper-plane"></i> رسائل مباشرة لواتساب
+                </div>
+            </div>
+            
+            <!-- CPA -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">متوسط تكلفة الرسالة (CPA)</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-tags"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">17.26 <span class="text-xs font-normal text-slate-500">ج.م</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-compress"></i> مقابل متوسط السوق المقبول
+                </div>
+            </div>
+            
+            <!-- Total Reach / Impressions -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">إجمالي عدد الظهور</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">437,308 <span class="text-xs font-normal text-slate-500">مرة</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-users"></i> الوصول: 168,199 مستخدم
+                </div>
+            </div>
+
+            <!-- Total Link Clicks -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">إجمالي النقرات على الروابط</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-mouse-pointer"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">2,570 <span class="text-xs font-normal text-slate-500">نقرة</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-chart-simple"></i> معدل النقر الإجمالي (CTR): 1.90%
+                </div>
+            </div>
+
+            <!-- Average CPC -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">متوسط تكلفة النقرة (CPC)</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-arrow-pointer"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">4.68 <span class="text-xs font-normal text-slate-500">ج.م</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-receipt"></i> تكلفة جلب النقرة الواحدة
+                </div>
+            </div>
+
+            <!-- Average CPM -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">تكلفة الـ 1000 ظهور (CPM)</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">27.51 <span class="text-xs font-normal text-slate-500">ج.م</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-eye"></i> لكل 1,000 مشاهدة للإعلان
+                </div>
+            </div>
+
+            <!-- Frequency -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between text-slate-400 mb-2">
+                        <span class="text-xs sm:text-sm font-semibold">معدل التكرار (Frequency)</span>
+                        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-rotate"></i>
+                        </div>
+                    </div>
+                    <div class="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">2.60 <span class="text-xs font-normal text-slate-500">مرة</span></div>
+                </div>
+                <div class="mt-2 text-[11px] text-brand-600 dark:text-brand-400 flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-user-check"></i> متوسط مشاهدة الشخص للإعلان
+                </div>
+            </div>
+        </section>
+
+        <!-- Subject Performance Section with Combined Metrics -->
+        <section id="subject-analysis" class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-brand-500"></i> تحليل كفاءة أداء المواد والمسارات الدراسية (Subject Analysis - Comprehensive View)
+                </h3>
+                <span class="text-xs px-3 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-full font-semibold">
+                    * مدمج به كامل معايير التقرير
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Comprehensive Performance Table Card -->
+                <div class="lg:col-span-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                        <span class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-table text-brand-500"></i> جدول مقارنة كفاءة الحملات الشامل
+                        </span>
+                        <span class="text-xs bg-brand-100 dark:bg-brand-950/50 text-brand-800 dark:text-brand-400 px-2.5 py-1 rounded-md font-semibold">تحديث مصادق</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-950 text-slate-400 text-xs font-bold border-b border-slate-100 dark:border-slate-800">
+                                    <th class="p-4">المادة الدراسية</th>
+                                    <th class="p-4 text-center">الميزانية المستهلكة</th>
+                                    <th class="p-4 text-center">الرسائل المحققة</th>
+                                    <th class="p-4 text-center">تكلفة الرسالة (CPA)</th>
+                                    <th class="p-4 text-center">الظهور (Impressions)</th>
+                                    <th class="p-4 text-center">الوصول الفعلي (Reach)</th>
+                                    <th class="p-4 text-center">النقرات (Link Clicks)</th>
+                                    <th class="p-4 text-center">تكلفة النقرة (CPC)</th>
+                                    <th class="p-4 text-center">تكلفة الـ 1000 ظهور (CPM)</th>
+                                    <th class="p-4 text-center">معدل النقر (CTR)</th>
+                                    <th class="p-4 text-center">معدل التكرار (Freq)</th>
+                                    <th class="p-4 text-center">حالة الإعلان</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-slate-100 dark:divide-slate-800/60">
+                                <tr class="hover:bg-brand-50/10 dark:hover:bg-brand-900/10 transition">
+                                    <td class="p-4 font-bold text-slate-950 dark:text-white sticky right-0 bg-white dark:bg-slate-900">الأحياء (Biology)</td>
+                                    <td class="p-4 text-center font-semibold">3,330.65 ج.م</td>
+                                    <td class="p-4 text-center"><span class="bg-brand-100 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 px-2.5 py-1 rounded-md font-bold">312</span></td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-bold">10.68 ج.م</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">139,917</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">76,735</td>
+                                    <td class="p-4 text-center font-medium">784</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">4.25 ج.م</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">23.80 ج.م</td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-semibold">0.56%</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">1.82</td>
+                                    <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-100 text-brand-800 dark:bg-brand-950/50 dark:text-brand-400 rounded-full font-semibold"><span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span> نشطة</span></td>
+                                </tr>
+                                <tr class="hover:bg-brand-50/10 dark:hover:bg-brand-900/10 transition">
+                                    <td class="p-4 font-bold text-slate-950 dark:text-white sticky right-0 bg-white dark:bg-slate-900">الجغرافيا (Geography)</td>
+                                    <td class="p-4 text-center font-semibold">2,168.16 ج.م</td>
+                                    <td class="p-4 text-center"><span class="bg-brand-100 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 px-2.5 py-1 rounded-md font-bold">173</span></td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-bold">12.53 ج.م</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">92,376</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">42,436</td>
+                                    <td class="p-4 text-center font-medium">562</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">3.86 ج.م</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">23.47 ج.م</td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-semibold">0.61%</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">2.18</td>
+                                    <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-100 text-brand-800 dark:bg-brand-950/50 dark:text-brand-400 rounded-full font-semibold"><span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span> نشطة</span></td>
+                                </tr>
+                                <tr class="hover:bg-brand-50/10 dark:hover:bg-brand-900/10 transition">
+                                    <td class="p-4 font-bold text-slate-950 dark:text-white sticky right-0 bg-white dark:bg-slate-900">التاريخ (History)</td>
+                                    <td class="p-4 text-center font-semibold">2,463.75 ج.م</td>
+                                    <td class="p-4 text-center">126</td>
+                                    <td class="p-4 text-center text-slate-700 dark:text-slate-200">19.55 ج.م</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">70,656</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">38,650</td>
+                                    <td class="p-4 text-center font-medium">460</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">5.36 ج.م</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">34.87 ج.م</td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-semibold">0.65%</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">1.83</td>
+                                    <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-100 text-brand-800 dark:bg-brand-950/50 dark:text-brand-400 rounded-full font-semibold"><span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span> نشطة</span></td>
+                                </tr>
+                                <tr class="hover:bg-brand-50/10 dark:hover:bg-brand-900/10 transition">
+                                    <td class="p-4 font-bold text-slate-950 dark:text-white sticky right-0 bg-white dark:bg-slate-900">اللغة العربية (Arabic)</td>
+                                    <td class="p-4 text-center font-semibold">1,781.57 ج.م</td>
+                                    <td class="p-4 text-center">52</td>
+                                    <td class="p-4 text-center text-amber-600 dark:text-amber-500 font-semibold">34.26 ج.م</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">47,070</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">27,417</td>
+                                    <td class="p-4 text-center font-medium">268</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">6.65 ج.م</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">37.85 ج.م</td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-semibold">0.57%</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">1.72</td>
+                                    <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-100 text-brand-800 dark:bg-brand-950/50 dark:text-brand-400 rounded-full font-semibold"><span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span> نشطة</span></td>
+                                </tr>
+                                <tr class="hover:bg-brand-50/10 dark:hover:bg-brand-900/10 transition">
+                                    <td class="p-4 font-bold text-slate-950 dark:text-white sticky right-0 bg-white dark:bg-slate-900">الفلسفة (Philosophy)</td>
+                                    <td class="p-4 text-center font-semibold">2,286.67 ج.م</td>
+                                    <td class="p-4 text-center">34</td>
+                                    <td class="p-4 text-center text-rose-600 dark:text-rose-400 font-bold">67.26 ج.م</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">87,289</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">51,060</td>
+                                    <td class="p-4 text-center font-medium">496</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">4.61 ج.م</td>
+                                    <td class="p-4 text-center text-slate-600 dark:text-slate-300">26.20 ج.م</td>
+                                    <td class="p-4 text-center text-brand-600 dark:text-brand-400 font-semibold">0.57%</td>
+                                    <td class="p-4 text-center text-slate-500 dark:text-slate-400">1.71</td>
+                                    <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-400 rounded-full font-semibold"><span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span> موقوفة</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Double Chart Insights Row matching brand colors -->
+                <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <!-- Chart CPA -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-1">توزيع تكلفة الرسائل (CPA)</h4>
+                            <p class="text-xs text-slate-400 mb-4">مقارنة كفاءة السعر لكل محادثة بصرية في الحساب</p>
+                        </div>
+                        <div class="relative w-full h-64 flex items-center justify-center">
+                            <canvas id="cpaChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart Spend -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-1">توزيع ميزانيات المواد المنفقة (EGP)</h4>
+                            <p class="text-xs text-slate-400 mb-4">قيمة الأموال المستهلكة المخصصة لكل مادة دراسية على حدة</p>
+                        </div>
+                        <div class="relative w-full h-64 flex items-center justify-center">
+                            <canvas id="spendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Demographics Section with customized progress bars -->
+        <section id="demographics" class="mb-8">
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-users text-brand-500"></i> التوزيع الديموغرافي والنوعي (Demographics Breakdown)
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Gender Card -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm">
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-venus-mars text-brand-500"></i> الأداء والميزانية حسب الجنس (Gender)
+                    </h4>
+                    
+                    <div class="space-y-4">
+                        <!-- Female -->
+                        <div>
+                            <div class="flex justify-between items-center text-sm mb-1.5">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">إناث (Female)</span>
+                                <span class="text-xs text-slate-500">7,560.87 ج.م (434 رسالة) - CPA: 17.42 ج.م</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-500 h-full rounded-full" style="width: 63%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Male -->
+                        <div>
+                            <div class="flex justify-between items-center text-sm mb-1.5">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">ذكور (Male)</span>
+                                <span class="text-xs text-slate-500">4,357.14 ج.م (254 رسالة) - CPA: 17.15 ج.م</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-300 h-full rounded-full" style="width: 37%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-xl text-xs text-slate-500 leading-relaxed">
+                        <i class="fa-solid fa-circle-info text-brand-500 ml-1"></i> الإناث يمثلن الفئة الأكثر طلباً للرسائل بنسبة 63% من إجمالي الميزانية المنفقة مما يعني أهمية استهدافهن المستمر.
+                    </div>
+                </div>
+                
+                <!-- Age Card -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm">
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cake-candles text-brand-500"></i> الأداء والميزانية حسب الفئات العمرية (Age)
+                    </h4>
+                    
+                    <div class="space-y-4">
+                        <!-- Students -->
+                        <div>
+                            <div class="flex justify-between items-center text-sm mb-1.5">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">فئة 18-24 (الطلاب)</span>
+                                <span class="text-xs text-slate-500">6,607.75 ج.م (342 رسالة) - CPA: 19.32 ج.م</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-400 h-full rounded-full" style="width: 57%;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Parents -->
+                        <div>
+                            <div class="flex justify-between items-center text-sm mb-1.5">
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">فئة 25-54 (أولياء الأمور)</span>
+                                <span class="text-xs text-brand-500 font-bold">4,930.12 ج.م (327 رسالة) - CPA: 15.07 ج.م 🔥</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-brand-600 h-full rounded-full" style="width: 43%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-xl text-xs text-slate-500 leading-relaxed">
+                        <i class="fa-solid fa-lightbulb text-brand-500 ml-1"></i> أولياء الأمور (25-54) لديهم تكلفة رسائل أقل بشكل واضح (15.07 ج.م للرسالة) مقارنة بالطلاب مباشرة. يوصى بتجهيز تصاميم مخصصة لهم.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer with customized copyright notice -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400">
+            <p class="mb-2">لوحة أداء فايرا للتسويق الرقمي &copy; 2026 Faiera. كل الحقوق محفوظة.</p>
+            <p>تم تحليله واستخلاصه بكامل معاييره ومؤشراته الإعلانية من ملف البيانات المرجعي المعتمد.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS Scripts for interactions & Charts -->
+    <script>
+        // Dark Mode Logic
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Apply saved theme on startup
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.getElementById('theme-icon').className = 'fa-solid fa-moon';
+        }
+
+        // Smooth scroll function
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Chart.js Chart Implementation matching Faiera Green Theme
+        const ctx = document.getElementById('cpaChart').getContext('2d');
+        const cpaChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['الأحياء', 'الجغرافيا', 'التاريخ', 'العربية', 'الفلسفة'],
+                datasets: [{
+                    label: 'تكلفة الرسالة (CPA) بالجنيه',
+                    data: [10.68, 12.53, 19.55, 34.26, 67.26],
+                    backgroundColor: [
+                        'rgba(46, 181, 114, 0.9)',  // Rich brand green (Biology)
+                        'rgba(74, 222, 128, 0.9)',  // Soft light green (Geography)
+                        'rgba(36, 158, 97, 0.7)',   // Medium brand green (History)
+                        'rgba(14, 66, 40, 0.6)',    // Dark forest green (Arabic)
+                        'rgba(239, 68, 68, 0.8)'    // Alert Red (Philosophy - Inactive)
+                    ],
+                    borderRadius: 8,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: { family: 'Cairo' },
+                        bodyFont: { family: 'Cairo' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: { family: 'Cairo' }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: { family: 'Cairo' }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Spent Chart Implementation matching Faiera Green Palette
+        const ctxSpend = document.getElementById('spendChart').getContext('2d');
+        const spendChart = new Chart(ctxSpend, {
+            type: 'doughnut',
+            data: {
+                labels: ['الأحياء', 'الجغرافيا', 'التاريخ', 'العربية', 'الفلسفة'],
+                datasets: [{
+                    data: [3330.65, 2168.16, 2463.75, 1781.57, 2286.67],
+                    backgroundColor: [
+                        'rgba(46, 181, 114, 0.95)', // Rich brand green
+                        'rgba(74, 222, 128, 0.9)',  // Light green
+                        'rgba(36, 158, 97, 0.8)',   // Darker green
+                        'rgba(14, 66, 40, 0.85)',   // Deep forest green
+                        'rgba(180, 180, 180, 0.8)'  // Neutral gray for stopped philosophy
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: 'Cairo', size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        titleFont: { family: 'Cairo' },
+                        bodyFont: { family: 'Cairo' }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
